@@ -1,7 +1,9 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,14 +15,19 @@ import androidx.compose.ui.window.application
 @Composable
 @Preview
 fun App() {
-    val text = remember { mutableStateOf("Hello, World!") }
+    val text = remember { mutableStateOf("") }
+    val message = "Hello ${text.value}"
+    val buttonEnabled = text.value.isNotEmpty()
 
     MaterialTheme {
-        Button(onClick = {
-            text.value = "Hello, Desktop!"
-        }) {
-            Text(text.value)
+        Column {
+            TextField(value = text.value, onValueChange = { nextValue -> text.value = nextValue })
+            Text(text = message)
+            Button(onClick = { text.value = "" }, enabled = buttonEnabled) {
+                Text("Clean")
+            }
         }
+
     }
 }
 
