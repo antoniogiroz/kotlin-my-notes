@@ -1,13 +1,16 @@
 import Note.Type
 
-data class Note(val title: String, val description: String, val type: Type) {
+data class Note(
+    val title: String,
+    val description: String = "",
+    val type: Type = Type.TEXT) {
     enum class Type { TEXT, AUDIO }
 }
 
 fun getNotes(): List<Note> = (0..10).map {
     Note(
-        "Title $it",
-        "Description $it",
-        if (it % 3 == 0) Type.AUDIO else Type.TEXT
+        title = "Title $it",
+        description = "Description $it",
+        type = if (it % 3 == 0) Type.AUDIO else Type.TEXT
     )
 }
