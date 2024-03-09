@@ -14,16 +14,12 @@ import androidx.compose.ui.window.application
 
 @Composable
 @Preview
-fun App() {
-    val text = remember { mutableStateOf("") }
-    val message = buildMessage(text.value)
-    val buttonEnabled = text.value.isNotEmpty()
-
+fun App(appState: AppState) {
     MaterialTheme {
         Column {
-            TextField(value = text.value, onValueChange = { nextValue -> text.value = nextValue })
-            Text(text = message)
-            Button(onClick = { text.value = "" }, enabled = buttonEnabled) {
+            TextField(value = appState.text.value, onValueChange = { nextValue -> appState.text.value = nextValue })
+            Text(text = appState.message)
+            Button(onClick = { appState.text.value = "" }, enabled = appState.buttonEnabled) {
                 Text("Clean")
             }
         }
@@ -31,10 +27,22 @@ fun App() {
     }
 }
 
-fun buildMessage(value: String) = "Hello $value"
+class AppState {
+    var text = mutableStateOf("")
+    val message
+        get() = "Hello ${text.value}"
 
-fun main() = application {
-    Window(onCloseRequest = ::exitApplication, title = "My Notes") {
-        App()
+    val buttonEnabled
+        get() = text.value.isNotEmpty()
+}
+
+
+fun main() {
+    val appState = AppState()
+
+    application {
+        Window(onCloseRequest = ::exitApplication, title = "My Notes") {
+            App(appState)
+        }
     }
 }
