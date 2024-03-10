@@ -6,6 +6,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,14 +18,19 @@ import kotlin.concurrent.thread
 @Composable
 @Preview
 fun App(appState: AppState) {
-    val notes = appState.notes.value
+    val (notes, loading) = appState.uiState.value
+
+    if (notes == null) {
+        LaunchedEffect(true) { appState.loadNotes() }
+    }
+
 
     MaterialTheme {
         Box(contentAlignment = Alignment.Center) {
-            if (appState.loading.value) {
+            if (loading) {
                 CircularProgressIndicator()
             }
-            NotesList(notes)
+            NotesList(notes ?: emptyList())
         }
     }
 }
@@ -68,25 +74,26 @@ private fun NotesList(notes: List<Note>) {
 }
 
 class AppState {
-    var notes = mutableStateOf(emptyList<Note>())
-    var loading = mutableStateOf(false)
+    var uiState = mutableStateOf(UiState())
 
     fun loadNotes() {
         thread {
-            loading.value = true
+            uiState.value = UiState(loading = true)
             getNotes() {
-                notes.value = it
-                loading.value = false
+                uiState.value = UiState(notes = it, loading = false)
             }
         }
     }
+
+    data class UiState(
+        val notes: List<Note>? = null,
+        val loading: Boolean = false
+    )
 }
 
 
 fun main() {
     val appState = AppState()
-
-    appState.loadNotes()
 
     application {
         Window(onCloseRequest = ::exitApplication, title = "My Notes") {
