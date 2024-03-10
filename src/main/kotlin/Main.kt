@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,9 +79,9 @@ class AppState {
 
     fun loadNotes() {
         thread {
-            uiState.value = UiState(loading = true)
-            getNotes() {
-                uiState.value = UiState(notes = it, loading = false)
+            uiState.update { state -> state.copy(loading = true) }
+            getNotes() { notes ->
+                uiState.update { state -> state.copy(notes = notes, loading = false) }
             }
         }
     }
@@ -89,6 +90,10 @@ class AppState {
         val notes: List<Note>? = null,
         val loading: Boolean = false
     )
+}
+
+fun <T> MutableState<T>.update(produceValue: (T) -> T) {
+    value = produceValue(value)
 }
 
 
