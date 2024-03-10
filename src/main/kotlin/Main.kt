@@ -19,38 +19,45 @@ import androidx.compose.ui.window.application
 @Composable
 @Preview
 fun App(appState: AppState) {
+    val notes = appState.notes.value
+
     MaterialTheme {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            items(appState.notes.value) { note ->
-                Card(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(.8f)
+        NotesList(notes)
+    }
+}
+
+@Composable
+private fun NotesList(notes: List<Note>) {
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        items(notes) { note ->
+            Card(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(.8f)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Row {
-                            Text(
-                                text = note.title,
-                                style = MaterialTheme.typography.h6,
-                                modifier = Modifier.weight(1f)
-                            )
-                            if (note.type == Note.Type.AUDIO) {
-                                Icon(
-                                    imageVector = Icons.Default.Mic,
-                                    contentDescription = null
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
+                    Row {
                         Text(
-                            text = note.description
+                            text = note.title,
+                            style = MaterialTheme.typography.h6,
+                            modifier = Modifier.weight(1f)
                         )
+                        if (note.type == Note.Type.AUDIO) {
+                            Icon(
+                                imageVector = Icons.Default.Mic,
+                                contentDescription = null
+                            )
+                        }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = note.description
+                    )
                 }
             }
         }
@@ -59,6 +66,7 @@ fun App(appState: AppState) {
 
 class AppState {
     var notes = mutableStateOf(getNotes())
+    var loading = mutableStateOf(false)
 }
 
 
