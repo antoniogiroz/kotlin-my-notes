@@ -13,7 +13,7 @@ import androidx.compose.ui.window.application
 @Composable
 @Preview
 fun App(): Unit = with(AppState) {
-    val (notes, loading) = uiState.value
+    val (notes, loading) = uiState
 
     if (notes == null) {
         LaunchedEffect(true) { loadNotes() }
